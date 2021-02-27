@@ -15,8 +15,6 @@ const HardcodedJSONString = JSON.stringify({
 
 type FormType = Record<string, any>
 
-// const DetermineInputType = (key: string, value: TJ)
-
 const IndexPage = () => {
   const [forms, setForms] = useState<IDecodedJSON[]>([])
   const [formStates, setFormStates] = useState<IDecodedJSON[]>([])
@@ -41,7 +39,7 @@ const IndexPage = () => {
       })
       setFormStates(nextState)
     },
-    []
+    [formStates]
   )
 
   useEffect(() => {
@@ -66,7 +64,7 @@ const IndexPage = () => {
         className={cx(formStates[index] ?? 'invisible', 'px-5 font-mono w-1/3')}
       >
         <h2 className='mb-4 text-lg font-medium'>Form {index + 1} Values</h2>
-        <div className='bg-gray-200 p-2'>
+        <div className='bg-gray-200 p-2 min-w-full w-64'>
           {JSON.stringify(formStates[index])}
         </div>
       </div>

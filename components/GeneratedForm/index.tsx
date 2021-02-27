@@ -24,10 +24,11 @@ const GeneratedForm: React.FC<IGeneratedFormProps> = ({
         if (name) {
           if (current.hasOwnProperty('value')) {
             newState[name] = (current as any).value
+          } else if (current.hasOwnProperty('checked')) {
+            newState[name] = (current as any).checked
           }
         }
       }
-
       updateState(newState)
     },
     [updateState]
@@ -86,7 +87,7 @@ const GeneratedForm: React.FC<IGeneratedFormProps> = ({
   return (
     <form
       onSubmit={save}
-      className='flex flex-row flex-wrap justify-between py-4 px-5 my-4 bg-gray-200'
+      className='flex flex-row flex-wrap justify-between py-4 px-5 my-4 w-full bg-gray-200'
     >
       {FormElements}
       <div>
