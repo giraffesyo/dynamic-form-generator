@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "^4.2.1",
     "autoprefixer": "^10.0.4",
     "luxon": "^1.26.0",
     "next": "latest",

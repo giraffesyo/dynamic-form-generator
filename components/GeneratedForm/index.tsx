@@ -14,7 +14,7 @@ type TJSONValue =
 interface IDecodedJSON {
   [key: string]: TJSONValue
 }
-// convert strings to dates
+// convert strings to dates ( used by JSON.parse() )
 const JSONReviver = (key: string, value: TJSONValue) => {
   if (typeof value !== 'string') return value
 
