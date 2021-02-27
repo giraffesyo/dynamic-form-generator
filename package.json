@@ -11,6 +11,7 @@
     "@fontsource/ibm-plex-sans": "^4.2.1",
     "autoprefixer": "^10.0.4",
     "classnames": "^2.2.6",
+    "immer": "^8.0.1",
     "luxon": "^1.26.0",
     "next": "latest",
     "postcss": "^8.1.10",

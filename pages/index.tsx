@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import GeneratedForm from '../components/GeneratedForm'
 import JSONReviver from '../lib/reviveJSON'
 import cx from 'classnames'
+import produce from 'immer'
+import { IDecodedJSON } from '../typings'
 
 const HardcodedJSONString = JSON.stringify({
   name: 'default name',
@@ -16,7 +18,8 @@ type FormType = Record<string, any>
 // const DetermineInputType = (key: string, value: TJ)
 
 const IndexPage = () => {
-  const [forms, setForms] = useState<FormType[]>([])
+  const [forms, setForms] = useState<IDecodedJSON[]>([])
+  const [formStates, setFormStates] = useState<IDecodedJSON[]>([])
 
   const [textareaValue, setTextareaValue] = useState(HardcodedJSONString)
   const [validJSON, setValidJSON] = useState<boolean>(false)
@@ -31,6 +34,16 @@ const IndexPage = () => {
     }
   }, [textareaValue, forms])
 
+  const updateFormState = useCallback(
+    (formIndex: number) => (newState: FormType) => {
+      const nextState = produce(formStates, (draftState) => {
+        draftState[formIndex] = newState
+      })
+      setFormStates(nextState)
+    },
+    []
+  )
+
   useEffect(() => {
     try {
       JSON.parse(textareaValue, JSONReviver)
@@ -41,9 +54,22 @@ const IndexPage = () => {
   }, [textareaValue])
 
   const GeneratedForms = forms.map((decodedJson, index) => (
-    <div key={`form-${index + 1}`} className='my-2'>
-      <h2 className='text-lg font-medium'>Form {index + 1}</h2>
-      <GeneratedForm decodedJSON={decodedJson}></GeneratedForm>
+    <div key={`form-${index + 1}`} className='flex flex-row py-4 px-5 my-4'>
+      <div className='w-2/3 mr-5 h-full'>
+        <h2 className='text-lg font-medium'>Form {index + 1}</h2>
+        <GeneratedForm
+          updateState={updateFormState(index)}
+          decodedJSON={decodedJson}
+        ></GeneratedForm>
+      </div>
+      <div
+        className={cx(formStates[index] ?? 'invisible', 'px-5 font-mono w-1/3')}
+      >
+        <h2 className='mb-4 text-lg font-medium'>Form {index + 1} Values</h2>
+        <div className='bg-gray-200 p-2'>
+          {JSON.stringify(formStates[index])}
+        </div>
+      </div>
     </div>
   ))
 
@@ -56,7 +82,7 @@ const IndexPage = () => {
       </p>
       <div className='flex flex-row flex-wrap'>
         <textarea
-          className='w-full h-32'
+          className='w-full h-32 font-mono'
           value={textareaValue}
           onChange={(e) => setTextareaValue(e.currentTarget.value)}
         ></textarea>
@@ -75,7 +101,7 @@ const IndexPage = () => {
           </button>
         </div>
       </div>
-      {GeneratedForms}
+      <div className='w-full flex flex-row flex-wrap'>{GeneratedForms}</div>
     </div>
   )
 }
