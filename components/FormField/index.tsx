@@ -1,15 +1,18 @@
+import cx from 'classnames'
+import styles from './formfield.module.css'
 interface IFormField {
   name: string
+  classNames?: string
 }
 
 const SplitCamelCase = (str: string) => str.replace(/([a-z](?=[A-Z]))/g, '$1 ')
 
-const FormField: React.FC<IFormField> = ({ name, children }) => {
+const FormField: React.FC<IFormField> = ({ name, children, classNames }) => {
   return (
-    <>
-      <label className='capitalize'>{SplitCamelCase(name)}</label>
+    <div className={cx(classNames, styles.wrapper)}>
+      <label className={styles.label}>{SplitCamelCase(name)}</label>
       {children}
-    </>
+    </div>
   )
 }
 

@@ -1,72 +1,45 @@
 import { DateTime } from 'luxon'
-import FormField from '../FormField'
 import getHexColorValue from '../../lib/getHexColorValue'
-
-type TJSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | IDecodedJSON
-  | IDecodedJSON[]
-  | (() => any)
-
-interface IDecodedJSON {
-  [key: string]: TJSONValue
-}
-// convert strings to dates ( used by JSON.parse() )
-const JSONReviver = (key: string, value: TJSONValue) => {
-  if (typeof value !== 'string') return value
-
-  const ISODateTime = DateTime.fromISO(value)
-  const SQLDateTime = DateTime.fromSQL(value)
-  const AmericanDateTime = DateTime.fromFormat(value, 'MM/dd/yyyy')
-  // Store false or the date time if its a valid date
-  const validDateTime =
-    (ISODateTime.isValid && ISODateTime) ||
-    (SQLDateTime.isValid && SQLDateTime) ||
-    (AmericanDateTime.isValid && AmericanDateTime)
-  return validDateTime || value
-}
-
+import type { IDecodedJSON } from '../../typings'
+import FormField from '../FormField'
+import Input from '../Input'
 interface IGeneratedFormProps {
-  json: string
+  decodedJSON: IDecodedJSON
 }
 
-const GeneratedForm: React.FC<IGeneratedFormProps> = ({ json }) => {
-  const decoded: IDecodedJSON = JSON.parse(json, JSONReviver)
-  const FormElements = Object.entries(decoded).map(([key, value]) => {
+const GeneratedForm: React.FC<IGeneratedFormProps> = ({ decodedJSON }) => {
+  const FormElements = Object.entries(decodedJSON).map(([key, value]) => {
     const reactKey = 'input_' + key
     if (typeof value === 'boolean') {
       return (
         <FormField key={reactKey} name={key}>
-          <input type='checkbox' value={key} defaultChecked={value}></input>
+          <Input type='checkbox' value={key} defaultChecked={value} />
         </FormField>
       )
     } else if (typeof value === 'number') {
       return (
         <FormField key={reactKey} name={key}>
-          <input type='number' defaultValue={value} />
+          <Input type='number' defaultValue={value} />
         </FormField>
       )
     } else if (typeof value === 'string') {
       if (value.length > 500) {
         return (
           <FormField key={reactKey} name={key}>
-            <textarea defaultValue={value} />
+            <Input type='textarea' defaultValue={value} />
           </FormField>
         )
       } else if (key.toLowerCase() === 'color') {
         let colorValue = getHexColorValue(value)
         return (
           <FormField key={reactKey} name={key}>
-            <input type='color' defaultValue={colorValue || value}></input>
+            <Input type='color' defaultValue={colorValue || value} />
           </FormField>
         )
       } else {
         return (
           <FormField key={reactKey} name={key}>
-            <input defaultValue={value} />
+            <Input defaultValue={value} />
           </FormField>
         )
       }
@@ -74,14 +47,29 @@ const GeneratedForm: React.FC<IGeneratedFormProps> = ({ json }) => {
       console.log('hi')
       return (
         <FormField key={reactKey} name={key}>
-          <input type='date' defaultValue={value.toISODate()} />
+          <Input type='date' defaultValue={value.toISODate()} />
         </FormField>
       )
     } else {
       console.error(`key  ${key} was unhandled with value: ${value}`)
     }
   })
-  return <form>{FormElements}</form>
+  return (
+    <form className='flex flex-row flex-wrap justify-between py-4 px-5 my-4 bg-gray-200'>
+      {FormElements}
+      <div>
+        <button className='p-2 mx-2 bg-gray-700 rounded-md text-white'>
+          Save
+        </button>
+        <button
+          type='reset'
+          className='p-2 mx-2 bg-gray-700 rounded-md text-white'
+        >
+          Reset
+        </button>
+      </div>
+    </form>
+  )
 }
 
 export default GeneratedForm

@@ -1,0 +1,14 @@
+.wrapper {
+  @apply w-2/5 mx-8 my-2 flex flex-wrap;
+}
+
+.label {
+  @apply capitalize text-xl font-medium mt-1 mb-1;
+}
+
+.wrapper input {
+  @apply w-full;
+}
+.wrapper input[type='checkbox'] {
+  @apply w-auto flex order-first justify-self-center h-full mr-2;
+}
