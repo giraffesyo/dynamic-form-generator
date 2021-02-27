@@ -28,7 +28,6 @@ const IndexPage = () => {
       console.log(parsed)
       setForms([...forms, parsed])
     } catch (e) {
-      // TODO: log the json isnt valid
       console.error(e)
     }
   }, [textareaValue, forms])
