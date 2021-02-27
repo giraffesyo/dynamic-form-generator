@@ -25,7 +25,6 @@ const IndexPage = () => {
 
     try {
       const parsed: FormType = JSON.parse(textareaValue, JSONReviver)
-      console.log(parsed)
       setForms([...forms, parsed])
     } catch (e) {
       console.error(e)

@@ -44,7 +44,6 @@ const GeneratedForm: React.FC<IGeneratedFormProps> = ({ decodedJSON }) => {
         )
       }
     } else if (DateTime.isDateTime(value)) {
-      console.log('hi')
       return (
         <FormField key={reactKey} name={key}>
           <Input type='date' defaultValue={value.toISODate()} />
